@@ -5,11 +5,7 @@ const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const session = require('express-session')
 const passport = require('passport')
-
 const db = require('./models')
-const Todo = db.Todo
-const User = db.User
-
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
@@ -28,20 +24,15 @@ app.use(passport.session())
 require('./config/passport')(passport)
 app.use((req, res, next) => {
   res.locals.user = req.user
+  res.locals.isAuthenticated = req.isAuthenticated()
   next()
 })
 
 //setting route
 //首頁
-app.get('/', (req, res) => {
-  res.send('hello')
-})
-
+app.use('/', require('./routes/home'))
 app.use('/users', require('./routes/user'))
-
-
-
-
+app.use('/todos', require('./routes/todo'))
 
 // setting express 3000
 app.listen(3000, () => {
